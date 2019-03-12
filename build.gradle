@@ -3,7 +3,6 @@ buildscript {
         springbootVersion = '2.0.5.RELEASE'
     }
     repositories {
-	    //mavenCentral()
         maven {url 'http://artifactory.bancolombia.corp/global-bancolombia'}
         maven {url 'http://artifactory.bancolombia.corp/maven-bancolombia'}
         
@@ -24,7 +23,7 @@ apply plugin: 'docker'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-group = 'co.com.bancolombia.service.resolveenigmaapi'
+group = 'registry.ng.bluemix.net/negocios_bancolombia'
 version = '1.0.0'
 description = 'resolve-enigma-api'
 
@@ -34,7 +33,6 @@ bootJar {
 }
 
 repositories {
-    //mavenCentral()
     maven {url 'http://artifactory.bancolombia.corp/global-bancolombia'}
     maven {url 'http://artifactory.bancolombia.corp/maven-bancolombia'}
 }	
