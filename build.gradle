@@ -1,37 +1,74 @@
+buildscript {
+    ext {
+        springbootVersion = '2.0.5.RELEASE'
+    }
+    repositories {
+	    //mavenCentral()
+        maven {url 'http://artifactory.bancolombia.corp/global-bancolombia'}
+        maven {url 'http://artifactory.bancolombia.corp/maven-bancolombia'}
+        
+    }
+    dependencies {
+		classpath('org.springframework.boot:spring-boot-gradle-plugin:2.0.5.RELEASE')
+		classpath('se.transmode.gradle:gradle-docker:1.2')
+		
+    }
+}
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
-
-buildscript {
-	ext {
-		springBootVersion = '1.5.13.RELEASE'
-	}
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-	}
-}
-
-group = 'co.com.bancolombia.microservice.getOneEnigmaStep'
-version = '1.0.0'
-
-description = """get-one-enigma-step-api-controller"""	
-
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'docker'
 
 sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
-jar {
-	baseName = 'get-one-enigma-step-api-controller'
-	version =  '1.0'
+group = 'co.com.bancolombia.service.resolveenigmaapi'
+version = '1.0.0'
+description = 'resolve-enigma-api'
+
+bootJar {
+    baseName = 'get-one-enigma-step-api-controller'
+	version =  '1.0.0'
 }
 
 repositories {
-		mavenCentral()
+    //mavenCentral()
+    maven {url 'http://artifactory.bancolombia.corp/global-bancolombia'}
+    maven {url 'http://artifactory.bancolombia.corp/maven-bancolombia'}
+}	
+
+task buildDocker(type: Docker, dependsOn: build) {
+  push = false
+  applicationName = bootJar.baseName
+  dockerfile = file('src/main/docker/Dockerfile')
+  doFirst {
+    copy {
+      from bootJar
+      into stageDir
+    }
+  }
 }
+
+
+task copyDockerFile(type: Copy) {
+  from 'src/main/docker/Dockerfile'
+  into 'build/libs'
+}
+
+build.dependsOn copyDockerFile
+test.mustRunAfter copyDockerFile
+
+configurations {
+	compile.exclude group: "org.springframework.boot", module: "spring-boot-starter-tomcat"
+}
+
+
 dependencies {
-	compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version:'1.5.13.RELEASE'
-	compile group: 'io.springfox', name: 'springfox-swagger2', version:'2.7.0'
-	compile group: 'io.springfox', name: 'springfox-swagger-ui', version:'2.7.0'
+    compile('org.springframework.boot:spring-boot-starter-web') 
+    compile('org.springframework.boot:spring-boot-starter-undertow')
+    compile('io.springfox:springfox-swagger-ui:2.6.1')
+	compile('io.springfox:springfox-swagger2:2.6.1')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
 }

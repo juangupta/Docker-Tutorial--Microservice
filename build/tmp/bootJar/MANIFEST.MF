@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Start-Class: co.com.bancolombia.microservice.getOneEnigmaStep.getOneEn
+ igmaStepAplication
+Main-Class: org.springframework.boot.loader.JarLauncher
+
